@@ -58,8 +58,12 @@ export function validateOrderInput(body, session) {
       issues.push({ field: 'items', message: 'Produto inválido.' });
       continue;
     }
-    if (!Number.isInteger(quantity) || quantity < 1 || quantity > config.orders.maxUnitsPerItem) {
-      issues.push({ field: 'items', message: `Quantidade inválida para "${slug}".` });
+    if (!Number.isInteger(quantity) || quantity < 1) {
+      issues.push({ field: 'items', message: `Quantidade inválida para "${slug}". Use um número inteiro a partir de 1.` });
+      continue;
+    }
+    if (quantity > config.orders.maxUnitsPerItem) {
+      issues.push({ field: 'items', message: `Quantidade acima do permitido para "${slug}". Máximo de ${config.orders.maxUnitsPerItem} unidades por item.` });
       continue;
     }
     if (seen.has(slug)) {

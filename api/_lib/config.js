@@ -57,7 +57,7 @@ export const config = {
 
   orders: {
     maxItems: int(process.env.MAX_ITEMS_PER_ORDER, 20),
-    maxUnitsPerItem: int(process.env.MAX_UNITS_PER_ITEM, 99),
+    maxUnitsPerItem: int(process.env.MAX_UNITS_PER_ITEM, 999),
     /** Requisições por janela para rotas sensíveis. */
     rateLimitPerMinute: int(process.env.RATE_LIMIT_PER_MINUTE, 20),
   },
