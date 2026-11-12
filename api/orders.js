@@ -8,7 +8,7 @@
  *  - Parceria só vale o desconto se estiver aprovada no banco.
  */
 import { config, isDatabaseConfigured } from './_lib/config.js';
-import { createOrder, listMyOrders, resolvePartnership, validateOrderInput } from './_lib/orders.js';
+import { createOrder, listMyOrders, listProducts, priceQuote, resolvePartnership, validateOrderInput } from './_lib/orders.js';
 import { resolveSession } from './_lib/session.js';
 import { audit, rateLimit } from './_lib/security.js';
 import {
@@ -69,6 +69,16 @@ export default async function handler(req, res) {
       partnerFaction: validation.value.partnerFaction,
     });
 
+    /* 3.5) limites por produto (mensagem clara, antes de ir ao banco) ------- */
+    const quote = await priceQuote(validation.value.items);
+    if (quote.problems.length) {
+      return badRequest(
+        res,
+        'Revise as quantidades da encomenda.',
+        quote.problems.map((message) => ({ field: 'items', message })),
+      );
+    }
+
     /* 4) criação atômica (transação no Postgres) ---------------------------- */
     const result = await createOrder({
       input: validation.value,
@@ -123,6 +133,16 @@ export default async function handler(req, res) {
       return badRequest(res, 'Um dos produtos não está disponível no catálogo.');
     }
     if (message.includes('quantity_above_limit') || message.includes('invalid_quantity')) {
+      const slug = String(message).split(':').pop()?.trim();
+      const catalogo = await listProducts().catch(() => []);
+      const produto = catalogo.find((x) => x.slug === slug);
+      if (produto) {
+        return badRequest(
+          res,
+          `Quantidade acima do permitido para ${produto.name}.`,
+          [{ field: 'items', message: `Máximo de ${produto.maxPerOrder} unidades por pedido.` }],
+        );
+      }
       return badRequest(res, 'Quantidade inválida para um dos produtos.');
     }
     if (message.includes('empty_items') || message.includes('too_many_items')) {
