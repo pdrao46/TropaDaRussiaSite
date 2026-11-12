@@ -40,7 +40,7 @@ export function QuantityStepper({ value, onChange, min = 1, label, size = 'md' }
         inputMode="numeric"
         pattern="[0-9]*"
         value={draft}
-        onChange={(e) => setDraft(e.target.value.replace(/\D/g, '').slice(0, 2))}
+        onChange={(e) => setDraft(e.target.value.replace(/\D/g, '').slice(0, 3))}
         onBlur={(e) => commit(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === 'Enter') commit((e.target as HTMLInputElement).value);
