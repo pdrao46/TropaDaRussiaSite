@@ -35,7 +35,9 @@ test('quantidades: inteiras, positivas, sem decimais', () => {
   assert.equal(sanitizeQuantity(2.9), 2);
   assert.equal(sanitizeQuantity('4'), 4);
   assert.equal(sanitizeQuantity('abc'), null);
-  assert.equal(sanitizeQuantity(500), 99);
+  assert.equal(sanitizeQuantity(500), 500);
+  assert.equal(sanitizeQuantity(1000), 999);
+  assert.equal(sanitizeQuantity(5000), 999);
 });
 test('formatação pt-BR', () => {
   assert.equal(formatBRL(9350), 'R$ 9.350');

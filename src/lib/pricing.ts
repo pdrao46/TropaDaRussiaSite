@@ -4,7 +4,7 @@ import { getProductById } from '../data/products.ts';
 
 /** Quantidade máxima por item (proteção de interface; o backend define a regra final). */
 export const MIN_QUANTITY = 1;
-export const MAX_QUANTITY = 99;
+export const MAX_QUANTITY = 999;
 
 /**
  * Normaliza qualquer entrada para um inteiro positivo dentro dos limites.
